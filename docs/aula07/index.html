@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 07 · Ponteiros, bits e memória · PDS I · DCC/UFMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'Fira Code', monospace; }
+        .slide-enter { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bg-ufmg { background-color: #004a8e; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col">
+    <a href="../index.html" class="fixed top-3 left-3 z-50 text-sm text-slate-400 hover:text-white bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors no-underline">← Exercícios PDS I</a>
+
+    <!-- Área do Slide -->
+    <main class="flex-1 flex items-center justify-center p-4 md:p-8">
+        <div id="slide-container" class="w-full max-w-5xl aspect-video bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden relative slide-enter">
+            <!-- O conteúdo do slide será injetado aqui pelo JavaScript -->
+        </div>
+    </main>
+
+    <!-- Barra de Controle -->
+    <footer class="bg-slate-900/80 backdrop-blur-md border-t border-slate-800 p-6 flex items-center justify-between">
+        <div class="text-slate-400 text-sm font-medium">
+            Slide <span id="current-index" class="text-white">1</span> de <span id="total-slides">0</span>
+        </div>
+        
+        <div class="flex space-x-4">
+            <button id="prev-btn" class="flex items-center px-4 py-2 rounded-xl bg-slate-800 text-white disabled:opacity-30 hover:bg-slate-700 transition-all active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m15 18-6-6 6-6"/></svg> Anterior
+            </button>
+            
+            <button id="next-btn" class="flex items-center px-6 py-2 rounded-xl bg-blue-600 text-white disabled:opacity-30 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all active:scale-95">
+                Próximo <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+
+        <div class="hidden md:block">
+            <span class="text-slate-500 font-bold tracking-tighter text-xl">DCC | UFMG</span>
+        </div>
+    </footer>
+
+    <script>
+        const slides = [
+            {
+                type: 'cover',
+                title: 'Programação e Desenvolvimento de Software I',
+                subtitle: 'Exercícios Práticos: Ponteiros, Bits e Memória',
+                department: 'DCC - UFMG',
+                author: 'Prof. Rezeck',
+                iconColor: 'text-blue-400'
+            },
+            {
+                type: 'question',
+                id: 1,
+                title: '1. O Hacker de Registradores',
+                context: 'Em sistemas embarcados, registradores de hardware costumam ser acessados como inteiros de 32 bits, mas às vezes precisamos alterar apenas um periférico específico (um byte).',
+                task: 'Escreva um código que receba um int reg = 0x12345678. Use um ponteiro de unsigned char para apontar para este inteiro e altere apenas o byte menos significativo para 0xAB. Imprima o resultado final em hexadecimal.',
+                icon: '🛡️'
+            },
+            {
+                type: 'answer',
+                id: 1,
+                title: 'Solução: Acesso Direto à Memória',
+                code: `#include <stdio.h>
+
+int main() {
+    int reg = 0x12345678;
+    // Cast para ponteiro de char: acesso byte a byte
+    unsigned char *p = (unsigned char *)&reg;
+    
+    // Altera o primeiro byte na memória (Little Endian)
+    *p = 0xAB; 
+    
+    printf("Registrador alterado: 0x%X\\n", reg); 
+    // Resultado: 0x123456AB
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 2,
+                title: '2. Cifra de Fluxo (XOR)',
+                context: 'A operação XOR (^) é amplamente usada em criptografia simples porque é reversível e computacionalmente barata para microcontroladores.',
+                task: 'Crie um programa que defina um caractere \'A\' (dado) e uma chave secreta 0x3F. Aplique o XOR para "criptografar" o dado e imprima-o. Em seguida, aplique a chave novamente ao dado criptografado para recuperá-lo.',
+                icon: '⚡'
+            },
+            {
+                type: 'answer',
+                id: 2,
+                title: 'Solução: Criptografia Simétrica',
+                code: `#include <stdio.h>
+
+int main() {
+    char dado = 'A', chave = 0x3F;
+    
+    char cripto = dado ^ chave;
+    printf("Dado Ofuscado: 0x%X\\n", (unsigned char)cripto);
+    
+    char recuperado = cripto ^ chave;
+    printf("Dado Recuperado: %c\\n", recuperado);
+    
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 3,
+                title: '3. Otimização de Memória (XOR Swap)',
+                context: 'Em arquiteturas de baixo custo, evitar variáveis temporárias pode economizar ciclos de clock e registradores preciosos.',
+                task: 'Utilizando apenas o operador bit-a-bit XOR, implemente a troca de valores entre duas variáveis inteiras x e y sem criar nenhuma variável auxiliar (temp). Demonstre o funcionamento com x=10 e y=20.',
+                icon: '📟'
+            },
+            {
+                type: 'answer',
+                id: 3,
+                title: 'Solução: Troca sem Variável Auxiliar',
+                code: `#include <stdio.h>
+
+int main() {
+    int x = 10, y = 20;
+    
+    x ^= y; // x guarda o "mix" de ambos
+    y ^= x; // y recupera o original de x
+    x ^= y; // x recupera o original de y
+    
+    printf("Troca Efetuada -> x: %d, y: %d\\n", x, y);
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 4,
+                title: '4. Verificador de Paridade Digital',
+                context: 'O processamento de bits é muito mais rápido que operações aritméticas de divisão ou resto (modulo).',
+                task: 'Muitos protocolos de comunicação verificam se um dado é par ou ímpar. Use o operador de conjunção bit-a-bit (&) com uma máscara adequada para determinar se um número inteiro é par ou ímpar.',
+                icon: '🔢'
+            },
+            {
+                type: 'answer',
+                id: 4,
+                title: 'Solução: Bitwise vs Aritmética',
+                code: `#include <stdio.h>
+
+int main() {
+    int pulsos = 4321;
+    // O bit 0 define se um número é ímpar
+    if (pulsos & 1) 
+        printf("Quantidade Impar\\n");
+    else 
+        printf("Quantidade Par\\n");
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 5,
+                title: '5. Detetive de Endereços',
+                context: 'Entender o alinhamento de memória é crucial para depurar estouros de pilha (stack overflow) e entender o sizeof.',
+                task: 'Declare duas variáveis inteiras consecutivas x e y. Imprima seus endereços e calcule a distância em bytes entre elas usando aritmética de ponteiros (fazendo o cast para long). O resultado bate com o esperado para um int?',
+                icon: '🔍'
+            },
+            {
+                type: 'answer',
+                id: 5,
+                title: 'Solução: Aritmética de Endereços',
+                code: `#include <stdio.h>
+
+int main() {
+    int x = 0, y = 0;
+    // Distância em bytes convertendo para long
+    long diff = (long)&y - (long)&x;
+    
+    printf("End. X: %p | End. Y: %p\\n", &x, &y);
+    printf("Distancia na memoria: %ld bytes\\n", diff);
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 6,
+                title: '6. Tags de Printf e Tipos Grandes',
+                context: 'Um erro comum é usar tags de formato inadequadas para tipos de 64 bits, resultando em valores truncados ou negativos.',
+                task: 'Declare um unsigned long long com seu valor máximo (18.446.744.073.709.551.615). Tente imprimi-lo usando %d (inteiro simples) e %llu (long long unsigned) para observar a diferença.',
+                icon: '📚'
+            },
+            {
+                type: 'answer',
+                id: 6,
+                title: 'Solução: Formatação de Dados',
+                code: `#include <stdio.h>
+
+int main() {
+    unsigned long long energia = 18446744073709551615ULL;
+    
+    // %d interpreta apenas 32 bits e com sinal
+    printf("Errado (%%d): %d\\n", energia);
+    
+    // %llu usa os 64 bits corretamente
+    printf("Correto (%%llu): %llu\\n", energia);
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 7,
+                title: '7. Armadilha de Precedência',
+                context: 'Entender quando um valor é incrementado é vital em laços de controle de hardware.',
+                task: 'Dada a expressão "res = a++ * 5", se "a" começa em 10, qual será o valor de "res" e qual o valor final de "a"? Demonstre via código.',
+                icon: '⚙️'
+            },
+            {
+                type: 'answer',
+                id: 7,
+                title: 'Solução: Pós-incremento',
+                code: `#include <stdio.h>
+
+int main() {
+    int a = 10;
+    // O valor de 'a' é usado na conta e depois incrementado
+    int res = a++ * 5; 
+    
+    printf("Resultado da conta: %d\\n", res); // 50
+    printf("Valor final de a: %d\\n", a);      // 11
+    return 0;
+}`
+            },
+            {
+                type: 'question',
+                id: 8,
+                title: '8. Controlador de Motores (Masking)',
+                context: 'Em drivers de motor, usamos um único byte para controlar múltiplos atuadores (Bit-field).',
+                task: 'Crie uma função "ler_motor" (recebe status e id) e uma função "liga_motor" (recebe status e id). Use deslocamento de bits (<<) e operadores lógicos para isolar o bit desejado.',
+                icon: '📈'
+            },
+            {
+                type: 'answer',
+                id: 8,
+                title: 'Solução: Máscaras de Bits',
+                code: `#include <stdio.h>
+
+int ler_motor(unsigned char st, int id) {
+    return (st & (1 << id)) != 0;
+}
+
+unsigned char liga_motor(unsigned char st, int id) {
+    return st | (1 << id);
+}
+
+int main() {
+    unsigned char painel = 0x00;
+    painel = liga_motor(painel, 3); // Liga motor 4 (bit 3)
+    printf("Motor 4 status: %d\\n", ler_motor(painel, 3));
+    return 0;
+}`
+            }
+        ];
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        let currentIndex = 0;
+        const container = document.getElementById('slide-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const currIdxSpan = document.getElementById('current-index');
+        const totalSlidesSpan = document.getElementById('total-slides');
+
+        function renderSlide() {
+            const slide = slides[currentIndex];
+            let html = '';
+
+            // Reinicia animação
+            container.classList.remove('slide-enter');
+            void container.offsetWidth; // trigger reflow
+            container.classList.add('slide-enter');
+
+            if (slide.type === 'cover') {
+                html = `
+                    <div class="flex flex-col items-center justify-center h-full text-center p-8 space-y-6">
+                        <div class="bg-slate-800 p-8 rounded-full shadow-xl mb-4 text-6xl">⌨️</div>
+                        <h1 class="text-4xl font-bold text-white tracking-tight">${slide.title}</h1>
+                        <p class="text-xl text-blue-300 font-medium">${slide.subtitle}</p>
+                        <div class="pt-12 border-t border-slate-700 w-1/2">
+                            <p class="text-slate-400 uppercase tracking-widest text-sm">${slide.department}</p>
+                            <p class="text-slate-200 text-lg font-semibold">${slide.author}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (slide.type === 'question') {
+                html = `
+                    <div class="flex flex-col h-full p-6 md:p-10 space-y-4 md:space-y-6">
+                        <div class="flex items-center space-x-4 border-b border-slate-700 pb-4">
+                            <div class="p-3 bg-slate-800 rounded-lg text-2xl">${slide.icon}</div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-white">${slide.title}</h2>
+                        </div>
+                        <div class="flex-1 space-y-4 md:space-y-6 overflow-auto">
+                            <section class="bg-slate-800/50 p-4 md:p-6 rounded-xl border border-slate-700">
+                                <h3 class="text-blue-400 font-bold uppercase text-xs mb-3 flex items-center">
+                                    CONTEXTUALIZAÇÃO
+                                </h3>
+                                <p class="text-slate-200 text-base md:text-lg leading-relaxed">${slide.context}</p>
+                            </section>
+                            <section class="p-4 md:p-6 bg-blue-900/20 rounded-xl border border-blue-500/30">
+                                <h3 class="text-blue-400 font-bold uppercase text-xs mb-3 flex items-center">
+                                    TAREFA
+                                </h3>
+                                <p class="text-white text-lg md:text-xl font-medium leading-snug">${slide.task}</p>
+                            </section>
+                        </div>
+                    </div>
+                `;
+            } else if (slide.type === 'answer') {
+                html = `
+                    <div class="flex flex-col h-full p-6 md:p-10 space-y-4">
+                        <div class="flex items-center space-x-4 border-b border-slate-700 pb-4">
+                            <div class="p-3 bg-green-900/30 rounded-lg text-2xl">👁️</div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-white">${slide.title}</h2>
+                        </div>
+                        <div class="flex-1 overflow-hidden rounded-xl border border-slate-700 bg-[#1e1e1e] flex flex-col">
+                             <div class="flex items-center space-x-2 px-4 py-2 bg-slate-800 border-b border-slate-700">
+                               <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                               <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                               <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                               <span class="text-slate-400 text-xs ml-4 font-mono">solucao.c</span>
+                             </div>
+                             <pre class="p-4 md:p-6 text-sm md:text-base code-font text-slate-300 leading-relaxed overflow-auto h-full"><code>${escapeHtml(slide.code)}</code></pre>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            currIdxSpan.innerText = currentIndex + 1;
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === slides.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderSlide();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                renderSlide();
+            }
+        });
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.click();
+            if (e.key === 'ArrowLeft') prevBtn.click();
+        });
+
+        // Inicialização
+        totalSlidesSpan.innerText = slides.length;
+        renderSlide();
+    </script>
+</body>
+</html>
