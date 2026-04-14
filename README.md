@@ -10,6 +10,8 @@ Repositório com **exercícios em HTML** para a disciplina *Programação e Dese
 |------|------|--------|
 | 07 | Ponteiros, bits e memória | [`docs/aula07/index.html`](docs/aula07/index.html) |
 | 08 | Processamento condicional | [`docs/aula08/index.html`](docs/aula08/index.html) |
+| 09 | Repetição: `while` e `do-while` | [`docs/aula09/index.html`](docs/aula09/index.html) |
+| 10 | Repetição: `for` (padrões, Fibonacci, fatorial) | [`docs/aula10/index.html`](docs/aula10/index.html) |
 
 A **página inicial** que lista os links está em [`docs/index.html`](docs/index.html).
 
@@ -44,6 +46,8 @@ docs/
   .nojekyll
   aula07/index.html   # exercícios da aula 07
   aula08/index.html   # exercícios da aula 08
+  aula09/index.html   # exercícios da aula 09
+  aula10/index.html   # exercícios da aula 10
 ```
 
 Para incluir novas aulas no futuro, adicione `docs/aulaNN/index.html` e um cartão correspondente em `docs/index.html`.
