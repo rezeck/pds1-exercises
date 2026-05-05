@@ -45,16 +45,16 @@
             {
                 type: 'cover',
                 title: 'Vetores unidimensionais',
-                subtitle: 'percurso por índice, dados gerados aleatoriamente, buscas, flags e ordenação elementar',
+                subtitle: 'histórias de engenharia com vetores: sensores fictícios, buscas humildes, matemática milenar — e um game show lendário.',
                 author: 'Prof. Paulo Rezeck',
                 semester: '2026/01'
             },
             {
                 type: 'problem',
                 id: 1,
-                title: '1. Medições em vetor (máximo, mínimo e média)',
-                context: 'Imagine monitorar a temperatura de um servidor. Você quer o pico (máximo) para não superaquecer o equipamento, o valor mais baixo e a média para um relatório. Em laboratório, às vezes não há arquivo de dados — então simulamos N leituras escolhendo cada elemento ao acaso dentro de uma faixa plausível (por exemplo algo em torno de “sala de máquinas”).',
-                problem: 'Leia um inteiro N ≥ 1. Inicialize o gerador aleatório (por exemplo uma semente tirada da hora atual, como costumamos na disciplina). Preencha um vetor com N valores reais simulados, todos aleatoriamente dentro de uma faixa de temperatura que você fixar entre cerca de 20 °C e 35 °C. Em seguida, percorrendo esse vetor, calcule e imprima o maior, o menor e a média aritmética, com duas casas decimais, nestas linhas:\nMAX: …\nMIN: …\nMEDIA: …',
+                title: '1. Análise de dados de sensores (máx. / mín. / média)',
+                motivation: 'Imagine monitorar a temperatura em um servidor: você precisa do pico de calor para evitar estrago no hardware, da leitura mais baixa quando a carga despenca à noite, e da média para fechar relatório de SLA. Nos exercícios muitas vezes não há arquivo nem API — então tratamos esse painel como se alguém tivesse colado N sensores reais gravando valores em arquivo, só que você fabrica cada amostragem com aleatoriedade bem distribuída em uma faixa plausível, como laboratório de simulação.',
+                definition: 'Monte um vetor com N leituras reais geradas aleatoriamente dentro de uma faixa de temperatura crível (tipo salinha de servidor: pense algo entre “ar fresco” e “assando brownie dentro do gabinete”). Faça uma passada inteira pelo vetor e devolva o maior, o menor e a média aritmética. Escreva nessa ordem, com duas casas decimais:\nMAX: …\nMIN: …\nMEDIA: …',
                 icon: '🌡️'
             },
             {
@@ -97,9 +97,9 @@ As três métricas refletem a faixa fictícia de temperatura combinada.`,
             {
                 type: 'problem',
                 id: 2,
-                title: '2. Busca linear em vetor',
-                context: 'Precisamos achar uma informação em meio a muitos IDs ou códigos. Em sistemas embarcados isso aparece quando se varre uma lista até achar uma falha repetida.',
-                problem: 'Leia o tamanho N do vetor e preencha o vetor com N inteiros escolhidos aleatoriamente (por exemplo valores que simulem IDs em uma faixa que você mesmo definir). Escolha também um inteiro alvo ao acaso dentro da mesma ideia de faixa. Implemente uma busca linear percorrendo desde o primeiro índice: se o alvo aparecer na posição i, imprima ENCONTRADO: i; caso contrário imprima ENCONTRADO: -1.',
+                title: '2. Busca em “banco de dados” de IDs',
+                motivation: 'Encontrar uma informação específica dentro de uma enxurrada parece coisa só de servidor — mas muda pouco quando no embarcado você varre vetor inteiro até achar o código que acende diodo de erro. Como não tem “banco de dados” verdadeiro no laboratório, montamos lista aleatória de IDs sintéticos e escolhemos um alvo qualquer: o hábito de varrer até achar primeiro índice (ou fracassar com honra devolvendo -1) permanece igual.',
+                definition: 'Crie uma lista com N inteiros (simulando registros aleatórios) e gere também um alvo inteiro aleatório. Percorra do começo até o fim: se aparecer igual ao alvo, informe ENCONTRADO: seguido do índice que achou primeiro; caso termine sem sucesso devolva ENCONTRADO: -1.',
                 icon: '🔎'
             },
             {
@@ -143,9 +143,9 @@ Rodada 2: ENCONTRADO: -1
             {
                 type: 'problem',
                 id: 3,
-                title: '3. Primos até N (crivo de Eratóstenes)',
-                context: 'Primos aparecem no fundamento de vários sistemas seguros — e o Crivo de Eratóstenes, apesar antigo, ainda serve para filtrar candidatos usando um vetor de marcações.',
-                problem: 'Inicialize o gerador aleatório como na disciplina costuma-se fazer. Escolha um limite inteiro N ao acaso dentro de uma faixa que faça sentido para o problema (por exemplo algo entre cem e poucos mil), e mostre esse limite na saída (por exemplo uma linha LIMITE: N antes da lista).\nConstrua um vetor de flags 0 ou 1: inicialmente marcando possíveis primos e depois eliminando múltiplos; ao final imprima todos os primos entre 2 e N, em ordem crescente, separados por um espaço e com quebra de linha ao terminar.',
+                title: '3. Crivo de Eratóstenes (primos)',
+                motivation: 'Números primos aparecem no fundamento da criptografia moderna — por exemplo quando chaves bem grandes precisam de candidatos “limpos” antes das provas rápidas. O Crivo de Eratóstenes já era velho dois mil anos atrás mas ainda ensina bem o truque: um vetor de marcações vai riscando múltiplos até sobrarem só sobreviventes. No exercício fazemos igual laboratório de medidas: primeiro sorteamos até qual teto vai a varredura, como se dois times de projeto pedissem relatórios com limites diferentes.',
+                definition: 'Use um vetor de flags como booleanos 0 ou 1: inicialmente marque todos como candidatos, depois elimine múltiplos progressivamente até sobrarem só marcados verdadeiros. Zero e um nunca são primos úteis nesse relatório.\nSorteie aleatoriamente o limite N num intervalo coerente (por exemplo algo entre centenas e poucos mil), mostre esse limite primeiro numa linha no estilo “LIMITE: …”. Em seguida imprima todos os primos até N em ordem crescente separados só por espaços e feche a linha ao terminar.',
                 icon: '🧮'
             },
             {
@@ -192,9 +192,9 @@ int main() {
             {
                 type: 'problem',
                 id: 4,
-                title: '4. Ordenação por bolha (bubble sort)',
-                context: 'Dados ordenados facilitam análises e até buscas melhores adiante — e o método da bolha, apesar simples, mostra bem como percorrer e rearranjar índices de um vetor.',
-                problem: 'Leia um N e gere um vetor com N números inteiros escolhidos aleatoriamente (faixa que você mesmo convencionar, bastando que apareçam valores positivos e negativos de vez em quando).\nImplemente ordenação por bolha: compare elementos vizinhos e troque quando estiverem fora da ordem; repita até fechar todas as passadas necessárias. Imprima o vetor ordenado em uma única linha, elementos separados por espaço.',
+                title: '4. Ordenação de dados (bubble sort)',
+                motivation: 'Dados ordenados permitem visualizar histórias e preparar caminhos para buscas melhores adiante — e o método da bolha, apesar modesto na velocidade, mostra bem o que dois laços fazem quando cada par vizinho brigando precisa só trocar de lugar até a fila ficar comportada.',
+                definition: 'Gere aleatoriamente N inteiros (inclua positivos e negativos quando quiser cenário menos monótono). Implemente ordenação por bolha: compare elementos adjacentes e troque se estiverem na ordem errada; repita até encerrar as passagens necessárias. Imprima o vetor final ordenado em uma só linha, números separados por espaço.',
                 icon: '📈'
             },
             {
@@ -244,9 +244,9 @@ int main() {
             {
                 type: 'problem',
                 id: 5,
-                title: '5. Simulação probabilística (paradoxo de Monty Hall)',
-                context: 'Simular cenários repetidas vezes e medir proporções nos dá segurança em probabilidade — método que em engenharia costuma estar ligado a estimativas Monte Carlo. Aqui estudamos estratégia de trocar ou manter porta no jogo de três portas.',
-                problem: 'Simule pelo menos alguns milhares de rodadas do problema das três portas: em cada rodada apenas uma porta “vale” como prêmio; as outras não. Sorteie onde fica o prêmio e a escolha inicial do jogador de forma equiprovável entre as três. Considere a estratégia em que o jogador sempre troca para a outra porta depois da revelação (como tratamos em sala).\nCalcule empiricamente a taxa de vitória quando se troca sempre, e imprima em porcentagem com duas casas decimais. Se quiser, imprima também a taxa quando o jogador nunca troca.',
+                title: '5. Paradoxo de Monty Hall (simulação)',
+                motivation: 'Três portas, um carro atrás só de uma delas — e a intuição humana quase sempre erra a conta depois que o apresentador abre uma porta vazia. Em engenharia resolvemos com simulação: repetir o jogo milhares de vezes com sorteios honestos e medir frequência de vitória. Esse jeito de “brincar até estatística falar alto” aparece quando precisamos validar modelos probabilísticos sem ficar apenas no quadro-branco.',
+                definition: 'Simule dez mil rodadas (ou outro número grande na mesma ordem) do jogo das três portas: em cada uma o prêmio esconde uniformemente atrás de uma porta, o jogador escolhe uniformemente outra, o apresentador sempre revela uma porta ruim que não era a escolhida.\nCompare empiricamente a taxa de vitória de quem troca de porta depois da revelação versus quem teimosamente segura a primeira escolha. Imprima ambas em porcentagem com duas casas decimais.',
                 icon: '🚪'
             },
             {
@@ -332,20 +332,22 @@ Prob. manter : ~33.XX%`
                     </div>
                 `;
             } else if (slide.type === 'problem') {
+                const motiv = slide.motivation != null ? slide.motivation : slide.context || '';
+                const defn = slide.definition != null ? slide.definition : slide.problem || '';
                 html = `
-                    <div class="flex flex-col h-full p-10 space-y-6">
-                        <div class="flex items-center space-x-4 border-b border-slate-700 pb-4">
+                    <div class="flex flex-col h-full px-8 pt-8 pb-6 md:pb-10 min-h-0">
+                        <div class="flex items-center gap-4 border-b border-slate-700 pb-4 shrink-0">
                             <div class="p-3 bg-slate-800 rounded-lg text-3xl">${slide.icon}</div>
-                            <h2 class="text-3xl font-bold text-white">${slide.title}</h2>
+                            <h2 class="text-2xl md:text-3xl font-bold text-white leading-tight">${slide.title}</h2>
                         </div>
-                        <div class="flex-1 space-y-6 overflow-auto">
-                            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                                <h3 class="text-blue-400 font-bold text-xs uppercase mb-2 tracking-widest">Contexto</h3>
-                                <p class="text-slate-200 text-lg">${slide.context}</p>
+                        <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6 overflow-auto">
+                            <div class="rounded-xl border-l-[5px] border-blue-500 bg-blue-950/35 p-5 md:p-6 shadow-inner">
+                                <h3 class="text-blue-300 font-bold text-sm uppercase mb-3 tracking-widest">Motivação</h3>
+                                <p class="text-slate-100 text-[15px] md:text-base leading-relaxed">${motiv.replace(/\n/g, '<br>')}</p>
                             </div>
-                            <div class="bg-blue-900/20 p-6 rounded-xl border border-blue-500/30">
-                                <h3 class="text-blue-400 font-bold text-xs uppercase mb-2 tracking-widest">Problema</h3>
-                                <p class="text-white text-xl font-medium leading-relaxed">${slide.problem.replace(/\n/g, '<br>')}</p>
+                            <div class="rounded-xl border-l-[5px] border-amber-500 bg-amber-950/25 p-5 md:p-6 shadow-inner">
+                                <h3 class="text-amber-200 font-bold text-sm uppercase mb-3 tracking-widest">Definição</h3>
+                                <p class="text-amber-50/95 text-[15px] md:text-[17px] font-medium leading-relaxed">${defn.replace(/\n/g, '<br>')}</p>
                             </div>
                         </div>
                     </div>
