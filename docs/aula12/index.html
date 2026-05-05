@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 12 · Vetores unidimensionais · PDS I · DCC/UFMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'Fira Code', monospace; }
+        .slide-enter { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col">
+    <a href="../index.html" class="fixed top-3 left-3 z-50 text-sm text-slate-400 hover:text-white bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors no-underline">← Exercícios PDS I</a>
+
+    <main class="flex-1 flex items-center justify-center p-4 md:p-8">
+        <div id="slide-container" class="w-full max-w-5xl aspect-video bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden relative slide-enter"></div>
+    </main>
+
+    <footer class="bg-slate-900/80 backdrop-blur-md border-t border-slate-800 p-6 flex items-center justify-between">
+        <div class="text-slate-400 text-sm font-medium">
+            Slide <span id="current-index" class="text-white">1</span> de <span id="total-slides">0</span>
+        </div>
+        <div class="flex space-x-4">
+            <button id="prev-btn" class="flex items-center px-4 py-2 rounded-xl bg-slate-800 text-white disabled:opacity-30 hover:bg-slate-700 transition-all active:scale-95">
+                ← Anterior
+            </button>
+            <button id="next-btn" class="flex items-center px-6 py-2 rounded-xl bg-blue-600 text-white disabled:opacity-30 hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all active:scale-95">
+                Próximo →
+            </button>
+        </div>
+        <div class="hidden md:block">
+            <span class="text-slate-500 font-bold tracking-tighter text-xl">DCC | UFMG</span>
+        </div>
+    </footer>
+
+    <script>
+        const slides = [
+            {
+                type: 'cover',
+                title: 'Vetores unidimensionais',
+                subtitle: 'percurso por índice, buscas, marcação em vetor de flags e ordenação elementar',
+                author: 'Prof. Paulo Rezeck',
+                semester: '2026/01'
+            },
+            {
+                type: 'problem',
+                id: 1,
+                title: '1. Medições em vetor (máximo, mínimo e média)',
+                context: 'Em engenharia, sequências de leituras (sensores, amostras) costumam ser armazenadas em vetores. Um único percurso com for permite extrair máximo, mínimo e soma.',
+                problem: 'Leia um inteiro N (N ≥ 1). Em seguida, leia N valores reais (double ou float). Armazene-os num vetor. Calcule e imprima o maior valor, o menor e a média aritmética dos N elementos. Imprima com duas casas decimais, nesta ordem:\nMAX: …\nMIN: …\nMEDIA: …',
+                icon: '🌡️'
+            },
+            {
+                type: 'solution',
+                id: 1,
+                title: 'Solução: um laço atualiza máx, min e soma',
+                code: `#include <stdio.h>
+
+int main() {
+    int n;
+    printf("Digite N: ");
+    scanf("%d", &n);
+
+    double v[1000];
+    for (int i = 0; i < n; i++) {
+        scanf("%lf", &v[i]);
+    }
+
+    double max = v[0], min = v[0], soma = 0.0;
+    for (int i = 0; i < n; i++) {
+        if (v[i] > max) max = v[i];
+        if (v[i] < min) min = v[i];
+        soma += v[i];
+    }
+
+    printf("MAX: %.2f\\n", max);
+    printf("MIN: %.2f\\n", min);
+    printf("MEDIA: %.2f\\n", soma / n);
+    return 0;
+}`,
+                output: `N=5 / valores 25.4 28.9 22.1 30.5 27.3
+
+MAX: 30.50
+MIN: 22.10
+MEDIA: 26.84`
+            },
+            {
+                type: 'problem',
+                id: 2,
+                title: '2. Busca linear em vetor',
+                context: 'Encontrar um valor igual em uma lista ordenada ou não ordenada parte do primeiro elemento: compara até achar ou chegar ao fim — busca linear, O(N). Em logs de IDs ou códigos, o retorno típico é o índice ou “não encontrado”.',
+                problem: 'Leia um inteiro N (N ≥ 1) e N inteiros. Leia também um inteiro ALVO. Se ALVO aparecer na posição de índice i (entre 0 e N−1), imprima uma linha no formato: ENCONTRADO: i (e quebra de linha). Caso não exista, imprima ENCONTRADO: -1.',
+                icon: '🔎'
+            },
+            {
+                type: 'solution',
+                id: 2,
+                title: 'Solução: função auxiliar ou laço direto',
+                code: `#include <stdio.h>
+
+int buscar(int vet[], int tam, int alvo) {
+    for (int i = 0; i < tam; i++) {
+        if (vet[i] == alvo) return i;
+    }
+    return -1;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int v[500];
+    for (int i = 0; i < n; i++) scanf("%d", &v[i]);
+
+    int alvo;
+    scanf("%d", &alvo);
+
+    int idx = buscar(v, n, alvo);
+    printf("ENCONTRADO: %d\\n", idx);
+    return 0;
+}`,
+                output: `Lista 10 20 30 40, alvo 30
+
+ENCONTRADO: 2
+
+Alvo 99
+
+ENCONTRADO: -1`
+            },
+            {
+                type: 'problem',
+                id: 3,
+                title: '3. Primos até N (crivo de Eratóstenes)',
+                context: 'O crivo usa um vetor de “ainda primo?” (marcado com 1) e marca múltiplos como 0. Combina bem com laços encadeados e é base didática antes de hashing e criptografia.',
+                problem: 'Leia um inteiro N (N ≥ 2). Liste todos os primos entre 2 e N (inclusive), em ordem crescente, separados por um espaço simples entre números, e quebra de linha ao final. Use um vetor de inteiros 0 ou 1 (flags) conforme as aulas (ex.: inicialmente todos candidatos, depois riscando múltiplos).\n Observação da disciplina (C moderno/c99): você pode usar vetor de tamanho N+1 (VLA); se sua IDE antiga falhar, use #define MAX 100005 e aceite só N até MAX−1.',
+                icon: '🧮'
+            },
+            {
+                type: 'solution',
+                id: 3,
+                title: 'Solução: vetor marca e eliminação de múltiplos',
+                code: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int primo[n + 1];
+    for (int i = 0; i <= n; i++) primo[i] = 1;
+    primo[0] = primo[1] = 0;
+
+    for (int p = 2; p * p <= n; p++) {
+        if (primo[p] == 1) {
+            for (int i = p * p; i <= n; i += p) {
+                primo[i] = 0;
+            }
+        }
+    }
+
+    int primeiro = 1;
+    for (int i = 2; i <= n; i++) {
+        if (primo[i]) {
+            if (!primeiro) printf(" ");
+            printf("%d", i);
+            primeiro = 0;
+        }
+    }
+    printf("\\n");
+    return 0;
+}`,
+                output: `N=20
+
+2 3 5 7 11 13 17 19`
+            },
+            {
+                type: 'problem',
+                id: 4,
+                title: '4. Ordenação por bolha (bubble sort)',
+                context: 'Trocas entre vizinhos que “elevam” o maior elemento para o fim a cada passada — intuitivo sobre vetores, prepara mergesort/quicksort em cursos seguintes.',
+                problem: 'Leia N e N inteiros. Ordene o vetor em ordem não decrescente com bubble sort (apenas dois for e troca quando v[j] > v[j+1]). Imprima o vetor ordenado na mesma linha, elementos separados por espaço.',
+                icon: '📈'
+            },
+            {
+                type: 'solution',
+                id: 4,
+                title: 'Solução: laços interno/externo e swap',
+                code: `#include <stdio.h>
+
+void bubbleSort(int v[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (v[j] > v[j + 1]) {
+                int temp = v[j];
+                v[j] = v[j + 1];
+                v[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int v[500];
+    for (int i = 0; i < n; i++) scanf("%d", &v[i]);
+
+    bubbleSort(v, n);
+
+    for (int i = 0; i < n; i++) {
+        if (i) printf(" ");
+        printf("%d", v[i]);
+    }
+    printf("\\n");
+    return 0;
+}`,
+                output: `Entrada:
+6
+5 1 4 2 8 3
+
+Saída:
+1 2 3 4 5 8`
+            },
+            {
+                type: 'problem',
+                id: 5,
+                title: '5. Simulação probabilística (paradoxo de Monty Hall)',
+                context: 'Métodos de Monte Carlo repetem experimentos aleatórios e estimam probabilidades pela frequência. Aqui uma porta esconde o “prêmio” e estudamos estratégia de trocar ou manter.',
+                problem: 'Simule repetidamente este jogo: entre 3 portas, apenas uma vale 1 (“carro”), as outras 0. Escolha uniforme sua porta inicial. O apresentador revela sempre uma porta com cabra (0) diferente da sua. Você sempre troca para a outra porta fechada. Fixe rodadas R = 10 000, use rand() já com seed em time(NULL). Calcule fração de vitórias dessa política sempre-trocando e imprima em porcentagem com duas casas (ex.: “Prob. trocar: 66.71%”). Opcionalmente imprima segundo valor para “sempre manter”.',
+                icon: '🚪'
+            },
+            {
+                type: 'solution',
+                id: 5,
+                title: 'Solução: vetor de 3 posições e contagem empírica',
+                code: `#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    int tentativas = 10000;
+    int vitTroca = 0;
+    int vitManter = 0;
+
+    srand((unsigned int)time(NULL));
+
+    for (int r = 0; r < tentativas; r++) {
+        int portas[3] = {0, 0, 0};
+        portas[rand() % 3] = 1;
+
+        int escolha = rand() % 3;
+
+        /* Sempre mantém escolha */
+        if (portas[escolha]) vitManter++;
+
+        /* Sempre troca para a outra fechada: ganha sse na escolha inicial era cabra */
+        if (portas[escolha] == 0) vitTroca++;
+    }
+
+    printf("Prob. trocar  : %.2f%%\\n", 100.0 * vitTroca / tentativas);
+    printf("Prob. manter : %.2f%%\\n", 100.0 * vitManter / tentativas);
+    return 0;
+}`,
+                output: `Valores próximos (variam a cada execução):
+
+Prob. trocar  : ~66.XX%
+Prob. manter : ~33.XX%`
+            },
+            {
+                type: 'cover',
+                title: 'Fim da Aula 12',
+                subtitle: 'Vetores e for aparecem juntos desde Aula 10 — consolidem índices, fronteiras (0 … N−1) e inicialização antes de ler.',
+                author: 'Bons estudos!',
+                semester: 'PDS I - UFMG'
+            }
+        ];
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        let currentIndex = 0;
+        const container = document.getElementById('slide-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const currIdxSpan = document.getElementById('current-index');
+        const totalSlidesSpan = document.getElementById('total-slides');
+
+        function renderSlide() {
+            const slide = slides[currentIndex];
+            let html = '';
+
+            container.classList.remove('slide-enter');
+            void container.offsetWidth;
+            container.classList.add('slide-enter');
+
+            if (slide.type === 'cover') {
+                const iconEmoji = slide.title.includes('Vetores') ? '📚' : '✅';
+                html = `
+                    <div class="flex flex-col items-center justify-center h-full text-center p-8 space-y-6">
+                        <div class="bg-blue-600/20 p-8 rounded-full text-6xl">${iconEmoji}</div>
+                        <h1 class="text-5xl font-bold text-white tracking-tight">${slide.title}</h1>
+                        <p class="text-2xl text-blue-400">${slide.subtitle}</p>
+                        <div class="pt-12 border-t border-slate-700 w-1/2">
+                            <p class="text-slate-400 uppercase tracking-widest text-sm">DCC - UFMG | ${slide.semester}</p>
+                            <p class="text-slate-200 text-lg font-semibold">${slide.author}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (slide.type === 'problem') {
+                html = `
+                    <div class="flex flex-col h-full p-10 space-y-6">
+                        <div class="flex items-center space-x-4 border-b border-slate-700 pb-4">
+                            <div class="p-3 bg-slate-800 rounded-lg text-3xl">${slide.icon}</div>
+                            <h2 class="text-3xl font-bold text-white">${slide.title}</h2>
+                        </div>
+                        <div class="flex-1 space-y-6 overflow-auto">
+                            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                                <h3 class="text-blue-400 font-bold text-xs uppercase mb-2 tracking-widest">Contexto</h3>
+                                <p class="text-slate-200 text-lg">${slide.context}</p>
+                            </div>
+                            <div class="bg-blue-900/20 p-6 rounded-xl border border-blue-500/30">
+                                <h3 class="text-blue-400 font-bold text-xs uppercase mb-2 tracking-widest">Problema</h3>
+                                <p class="text-white text-xl font-medium leading-relaxed">${slide.problem.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (slide.type === 'solution') {
+                html = `
+                    <div class="flex flex-col h-full p-10 space-y-4">
+                        <div class="flex items-center space-x-4 border-b border-slate-700 pb-4">
+                            <div class="p-3 bg-green-900/30 rounded-lg text-2xl">✅</div>
+                            <h2 class="text-3xl font-bold text-white">${slide.title}</h2>
+                        </div>
+                        <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
+                            <div class="md:col-span-2 flex flex-col rounded-xl border border-slate-700 bg-[#1e1e1e] overflow-hidden">
+                                <div class="px-4 py-2 bg-slate-800 text-xs text-slate-400 font-mono flex justify-between">
+                                    <span>exercicio.c</span>
+                                    <span>UTF-8</span>
+                                </div>
+                                <pre class="p-4 text-sm code-font text-slate-300 overflow-auto flex-1"><code>${escapeHtml(slide.code)}</code></pre>
+                            </div>
+                            <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 flex flex-col">
+                                <h3 class="text-green-500 font-bold text-xs uppercase mb-3 tracking-widest">Exemplo de saída</h3>
+                                <pre class="text-xs code-font text-green-400 leading-relaxed whitespace-pre-wrap">${escapeHtml(slide.output)}</pre>
+                                <div class="mt-auto pt-4 border-t border-slate-800">
+                                    <p class="text-[10px] text-slate-500 uppercase">Dica: teste vetor unitário (N=1), buscas com -1 alvo e valores pequenos no crivo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            currIdxSpan.innerText = currentIndex + 1;
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === slides.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderSlide(); } });
+        nextBtn.addEventListener('click', () => { if (currentIndex < slides.length - 1) { currentIndex++; renderSlide(); } });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextBtn.click();
+            if (e.key === 'ArrowLeft') prevBtn.click();
+        });
+
+        totalSlidesSpan.innerText = slides.length;
+        renderSlide();
+    </script>
+</body>
+</html>
