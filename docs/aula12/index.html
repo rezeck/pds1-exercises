@@ -45,7 +45,7 @@
             {
                 type: 'cover',
                 title: 'Vetores unidimensionais',
-                subtitle: 'percurso por índice, preenchimento com rand/srand, buscas, flags e ordenação elementar',
+                subtitle: 'percurso por índice, dados gerados aleatoriamente, buscas, flags e ordenação elementar',
                 author: 'Prof. Paulo Rezeck',
                 semester: '2026/01'
             },
@@ -53,14 +53,14 @@
                 type: 'problem',
                 id: 1,
                 title: '1. Medições em vetor (máximo, mínimo e média)',
-                context: 'Às vezes não temos arquivo nem teclado com todos os valores: simulamos amostras com rand() num intervalo escalado por RAND_MAX. A semente (srand) define a sequência; time(NULL) muda em cada execução.',
-                problem: 'Leia um inteiro N (N ≥ 1, use N razoável p.ex. N ≤ 1000 para vetor na pilha). Inclua `<stdlib.h>` e `<time.h>`. Antes do preenchimento do vetor, chame `srand((unsigned int)time(NULL))`. Em seguida, preencha N posições com `double` pseudoaleatórios no intervalo [20.0, 35.0] usando apenas `rand()` e normalização por `(double)RAND_MAX`. Em um segundo percurso, calcule maior, menor e média. Imprima com duas casas nesta ordem:\nMAX: …\nMIN: …\nMEDIA: …',
+                context: 'Imagine monitorar a temperatura de um servidor. Você quer o pico (máximo) para não superaquecer o equipamento, o valor mais baixo e a média para um relatório. Em laboratório, às vezes não há arquivo de dados — então simulamos N leituras escolhendo cada elemento ao acaso dentro de uma faixa plausível (por exemplo algo em torno de “sala de máquinas”).',
+                problem: 'Leia um inteiro N ≥ 1. Inicialize o gerador aleatório (por exemplo uma semente tirada da hora atual, como costumamos na disciplina). Preencha um vetor com N valores reais simulados, todos aleatoriamente dentro de uma faixa de temperatura que você fixar entre cerca de 20 °C e 35 °C. Em seguida, percorrendo esse vetor, calcule e imprima o maior, o menor e a média aritmética, com duas casas decimais, nestas linhas:\nMAX: …\nMIN: …\nMEDIA: …',
                 icon: '🌡️'
             },
             {
                 type: 'solution',
                 id: 1,
-                title: 'Solução: srand preenche o vetor; um laço tira métricas',
+                title: 'Solução: vetor aleatório e um laço para métricas',
                 code: `#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -90,22 +90,22 @@ int main() {
     printf("MEDIA: %.2f\\n", soma / n);
     return 0;
 }`,
-                output: `N=5000 (saídas variam a cada execução)
+                output: `N=600 (valores diferentes a cada execução)
 
-MAX/MIN ficam sempre em torno do intervalo [20,35].`
+As três métricas refletem a faixa fictícia de temperatura combinada.`,
             },
             {
                 type: 'problem',
                 id: 2,
                 title: '2. Busca linear em vetor',
-                context: 'Vetores preenchidos com rand repetem um padrão após cada semente. Busca linear só percorre: serve para dados “fabricados” em testes quanto para leituras reais.',
-                problem: 'Leia só N (N ≥ 1, ex. N ≤ 1000 para o exemplo abaixo). Chame `srand((unsigned int)time(NULL))`. Preencha um vetor de inteiros de tamanho N com valores em [0, 999] usando `rand() % 1000`. Gere também um inteiro ALVO pseudoaleatorio no mesmo intervalo. Use busca linear: se aparecer primeiro no índice i, imprima `ENCONTRADO: i`, senão imprima `ENCONTRADO: -1`. (Executar várias vezes deve alternar resultado.)',
+                context: 'Precisamos achar uma informação em meio a muitos IDs ou códigos. Em sistemas embarcados isso aparece quando se varre uma lista até achar uma falha repetida.',
+                problem: 'Leia o tamanho N do vetor e preencha o vetor com N inteiros escolhidos aleatoriamente (por exemplo valores que simulem IDs em uma faixa que você mesmo definir). Escolha também um inteiro alvo ao acaso dentro da mesma ideia de faixa. Implemente uma busca linear percorrendo desde o primeiro índice: se o alvo aparecer na posição i, imprima ENCONTRADO: i; caso contrário imprima ENCONTRADO: -1.',
                 icon: '🔎'
             },
             {
                 type: 'solution',
                 id: 2,
-                title: 'Solução: preencher com rand; buscar com índices',
+                title: 'Solução: lista aleatória e busca pelo índice',
                 code: `#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -144,14 +144,14 @@ Rodada 2: ENCONTRADO: -1
                 type: 'problem',
                 id: 3,
                 title: '3. Primos até N (crivo de Eratóstenes)',
-                context: 'O crivo usa um vetor de “ainda primo?” (marcado com 1) e marca múltiplos como 0. Combina bem com laços encadeados e é base didática antes de hashing e criptografia.',
-                problem: 'Em vez de digitar o limite, use `srand((unsigned int)time(NULL))` e obtenha N inteiro “aleatório” entre 120 e 500 (uniforme):\n `int n = 120 + rand() % (500 - 120 + 1);`\n Imprima em uma primeira linha o valor de N gerado (`LIMITE: N`). Lista todos os primos entre 2 e N, em ordem crescente e separados por espaço.\n Vetor auxiliar de flags: VLA `(n+1)` em C99, ou `#define MAX 100005` para ambientes estritos.',
+                context: 'Primos aparecem no fundamento de vários sistemas seguros — e o Crivo de Eratóstenes, apesar antigo, ainda serve para filtrar candidatos usando um vetor de marcações.',
+                problem: 'Inicialize o gerador aleatório como na disciplina costuma-se fazer. Escolha um limite inteiro N ao acaso dentro de uma faixa que faça sentido para o problema (por exemplo algo entre cem e poucos mil), e mostre esse limite na saída (por exemplo uma linha LIMITE: N antes da lista).\nConstrua um vetor de flags 0 ou 1: inicialmente marcando possíveis primos e depois eliminando múltiplos; ao final imprima todos os primos entre 2 e N, em ordem crescente, separados por um espaço e com quebra de linha ao terminar.',
                 icon: '🧮'
             },
             {
                 type: 'solution',
                 id: 3,
-                title: 'Solução: limite pseudoaleatorio + vetor de flags',
+                title: 'Solução: limite aleatório e vetor de marcação',
                 code: `#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -193,14 +193,14 @@ int main() {
                 type: 'problem',
                 id: 4,
                 title: '4. Ordenação por bolha (bubble sort)',
-                context: 'Trocas entre vizinhos que “elevam” o maior elemento para o fim a cada passada — intuitivo sobre vetores, prepara mergesort/quicksort em cursos seguintes.',
-                problem: 'Leia só N (1 ≤ N ≤ 5000 para caber na pilha conforme exemplo). Com `srand((unsigned int)time(NULL))`, preencha o vetor com N inteiros em [−500, 500]: use `(int)((rand() % 1001) - 500)`. Ordene por bubble sort (troque quando `v[j] > v[j+1]`). Imprima a sequência ordenada numa única linha, números separados por espaço.',
+                context: 'Dados ordenados facilitam análises e até buscas melhores adiante — e o método da bolha, apesar simples, mostra bem como percorrer e rearranjar índices de um vetor.',
+                problem: 'Leia um N e gere um vetor com N números inteiros escolhidos aleatoriamente (faixa que você mesmo convencionar, bastando que apareçam valores positivos e negativos de vez em quando).\nImplemente ordenação por bolha: compare elementos vizinhos e troque quando estiverem fora da ordem; repita até fechar todas as passadas necessárias. Imprima o vetor ordenado em uma única linha, elementos separados por espaço.',
                 icon: '📈'
             },
             {
                 type: 'solution',
                 id: 4,
-                title: 'Solução: gerar valores, bubble sort e impressão',
+                title: 'Solução: vetor aleatório e ordenação bolha',
                 code: `#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -245,8 +245,8 @@ int main() {
                 type: 'problem',
                 id: 5,
                 title: '5. Simulação probabilística (paradoxo de Monty Hall)',
-                context: 'Métodos de Monte Carlo repetem experimentos aleatórios e estimam probabilidades pela frequência. Aqui uma porta esconde o “prêmio” e estudamos estratégia de trocar ou manter.',
-                problem: 'Simule repetidamente este jogo: entre 3 portas, apenas uma vale 1 (“carro”), as outras 0. Escolha uniforme sua porta inicial. O apresentador revela sempre uma porta com cabra (0) diferente da sua. Você sempre troca para a outra porta fechada. Fixe rodadas R = 10 000, use rand() já com seed em time(NULL). Calcule fração de vitórias dessa política sempre-trocando e imprima em porcentagem com duas casas (ex.: “Prob. trocar: 66.71%”). Opcionalmente imprima segundo valor para “sempre manter”.',
+                context: 'Simular cenários repetidas vezes e medir proporções nos dá segurança em probabilidade — método que em engenharia costuma estar ligado a estimativas Monte Carlo. Aqui estudamos estratégia de trocar ou manter porta no jogo de três portas.',
+                problem: 'Simule pelo menos alguns milhares de rodadas do problema das três portas: em cada rodada apenas uma porta “vale” como prêmio; as outras não. Sorteie onde fica o prêmio e a escolha inicial do jogador de forma equiprovável entre as três. Considere a estratégia em que o jogador sempre troca para a outra porta depois da revelação (como tratamos em sala).\nCalcule empiricamente a taxa de vitória quando se troca sempre, e imprima em porcentagem com duas casas decimais. Se quiser, imprima também a taxa quando o jogador nunca troca.',
                 icon: '🚪'
             },
             {
@@ -289,7 +289,7 @@ Prob. manter : ~33.XX%`
             {
                 type: 'cover',
                 title: 'Fim da Aula 12',
-                subtitle: 'Vetores e for aparecem juntos desde Aula 10 — consolidem índices, srand antes de montar dados e repetibilidade só com mesma seed.',
+                subtitle: 'Vetores e for aparecem juntos desde a Aula 10 — consolidem índices, limites entre 0 e N−1, e sempre inicializar o aleatório antes de preencher o vetor.',
                 author: 'Bons estudos!',
                 semester: 'PDS I - UFMG'
             }
@@ -369,7 +369,7 @@ Prob. manter : ~33.XX%`
                                 <h3 class="text-green-500 font-bold text-xs uppercase mb-3 tracking-widest">Exemplo de saída</h3>
                                 <pre class="text-xs code-font text-green-400 leading-relaxed whitespace-pre-wrap">${escapeHtml(slide.output)}</pre>
                                 <div class="mt-auto pt-4 border-t border-slate-800">
-                                    <p class="text-[10px] text-slate-500 uppercase">Dica: N=1, use srand fixa para comparar rodadas iguais, e cheque se RAND_MAX &gt; valor do módulo no rand.</p>
+                                    <p class="text-[10px] text-slate-500 uppercase">Dica: teste N=1 e listas grandes; repetir execuções com aleatório muda médias e se o alvo foi achado ou não.</p>
                                 </div>
                             </div>
                         </div>
